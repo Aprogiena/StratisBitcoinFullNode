@@ -246,6 +246,8 @@ ModelManifest.xml
 /src/Stratis.Bitcoin.IntegrationTests/TestData
 /src/Stratis.Bitcoin.IntegrationTests/ValidSomeBlocks
 /src/Stratis.BitcoinD/Properties/launchSettings.json
+/src/Stratis.StratisD/Properties/launchSettings.json
+/src/Stratis.BreezeD/Properties/launchSettings.json
 /src/Stratis.Bitcoin.Tests/TestData/
 /src/Stratis.Bitcoin.Tests/Stratis.Bitcoin.Tests/TestData
 /src/Stratis.StratisD/Logs
