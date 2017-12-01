@@ -122,9 +122,6 @@ namespace Stratis.Bitcoin.P2P.Peer
     {
         /// <summary>Payload of the sent message.</summary>
         public Payload Payload;
-
-        /// <summary></summary>
-        public TaskCompletionSource<bool> Completion;
     }
 
     public class NetworkPeerConnection
@@ -215,7 +212,6 @@ namespace Stratis.Bitcoin.P2P.Peer
                                     if (socketEventManager.SocketEvent.SocketError != SocketError.Success)
                                         throw new SocketException((int)socketEventManager.SocketEvent.SocketError);
 
-                                    processing.Completion.SetResult(true);
                                     processing = null;
                                 }
                             }
@@ -238,7 +234,6 @@ namespace Stratis.Bitcoin.P2P.Peer
                 foreach (SentMessage pending in this.Messages)
                 {
                     this.logger.LogTrace("Connection terminated before message '{0}' could be sent.", pending.Payload?.Command);
-                    pending.Completion.SetException(new OperationCanceledException("The peer has been disconnected"));
                 }
 
                 this.Messages = new BlockingCollection<SentMessage>(new ConcurrentQueue<SentMessage>());
@@ -810,7 +805,6 @@ namespace Stratis.Bitcoin.P2P.Peer
                 this.connection.Messages.Add(new SentMessage()
                 {
                     Payload = payload,
-                    Completion = completion
                 });
             };
 
