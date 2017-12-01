@@ -124,6 +124,10 @@ namespace Stratis.Bitcoin.P2P.Peer
         public Payload Payload;
     }
 
+    /// <summary>
+    /// Represents a network connection to a peer. It is responsible for reading incoming messages form the peer 
+    /// and sending messages from the node to the peer.
+    /// </summary>
     public class NetworkPeerConnection
     {
         /// <summary>Logger for the node.</summary>
@@ -132,17 +136,27 @@ namespace Stratis.Bitcoin.P2P.Peer
         /// <summary>Provider of time functions.</summary>
         private readonly IDateTimeProvider dateTimeProvider;
 
+        /// <summary>Network peer that this object represents the node's connection to.</summary>
         public NetworkPeer Peer { get; private set; }
 
+        /// <summary>Connected network socket to the peer.</summary>
         public Socket Socket { get; private set; }
 
+        /// <summary>Event that is set when the connection is closed.</summary>
         public ManualResetEvent Disconnected { get; private set; }
 
+        /// <summary>Cancellation to be triggered at shutdown to abort all pending operations on the connection.</summary>
         public CancellationTokenSource Cancel { get; private set; }
 
-        internal BlockingCollection<SentMessage> Messages;
+        /// <summary>Queue of messages to be sent to a peer over the network connection.</summary>
+        private BlockingCollection<SentMessage> Messages;
 
+        /// <summary>Set to <c>1</c> when a cleanup has been initiated, otherwise <c>0</c>.</summary>
         private int cleaningUp;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public int ListenerThreadId;
 
         public NetworkPeerConnection(NetworkPeer peer, Socket socket, IDateTimeProvider dateTimeProvider, ILoggerFactory loggerFactory)
