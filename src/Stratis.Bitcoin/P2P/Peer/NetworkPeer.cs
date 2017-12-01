@@ -149,15 +149,10 @@ namespace Stratis.Bitcoin.P2P.Peer
         public CancellationTokenSource Cancel { get; private set; }
 
         /// <summary>Queue of messages to be sent to a peer over the network connection.</summary>
-        private BlockingCollection<SentMessage> Messages;
+        internal BlockingCollection<SentMessage> Messages;
 
         /// <summary>Set to <c>1</c> when a cleanup has been initiated, otherwise <c>0</c>.</summary>
         private int cleaningUp;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public int ListenerThreadId;
 
         public NetworkPeerConnection(NetworkPeer peer, Socket socket, IDateTimeProvider dateTimeProvider, ILoggerFactory loggerFactory)
         {
@@ -261,8 +256,6 @@ namespace Stratis.Bitcoin.P2P.Peer
             new Thread(() =>
             {
                 this.logger.LogTrace("()");
-
-                this.ListenerThreadId = Thread.CurrentThread.ManagedThreadId;
 
                 this.logger.LogTrace("Start listenting.");
                 Exception unhandledException = null;
@@ -987,7 +980,6 @@ namespace Stratis.Bitcoin.P2P.Peer
 
             try
             {
-                this.AssertNoListeningThread();
                 this.connection.Disconnected.WaitOne();
             }
             finally
@@ -1042,12 +1034,6 @@ namespace Stratis.Bitcoin.P2P.Peer
             this.logger.LogTrace("(-)");
         }
 
-        private void AssertNoListeningThread()
-        {
-            if (this.connection.ListenerThreadId == Thread.CurrentThread.ManagedThreadId)
-                throw new InvalidOperationException("Using Disconnect on this thread would result in a deadlock, use DisconnectAsync instead");
-        }
-
         public override string ToString()
         {
             return string.Format("{0} ({1})", this.State, this.PeerAddress.Endpoint);
@@ -1060,7 +1046,6 @@ namespace Stratis.Bitcoin.P2P.Peer
         /// <exception cref="System.InvalidOperationException">Thrown if used on the listener's thread, as it would result in a deadlock.</exception>
         public NetworkPeerListener CreateListener()
         {
-            this.AssertNoListeningThread();
             return new NetworkPeerListener(this);
         }
 
