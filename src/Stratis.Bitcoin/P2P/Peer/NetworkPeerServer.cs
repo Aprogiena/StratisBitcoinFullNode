@@ -215,13 +215,13 @@ namespace Stratis.Bitcoin.P2P.Peer
         {
             this.logger.LogTrace("({0}.{1}:{2})", nameof(client), nameof(client.Id), client.Id);
 
-            if (!this.clientsById.TryRemove(client.Id, out NetworkPeerClient unused))
-                this.logger.LogError("Internal data integration error.");
+                    int taskCount = Interlocked.Decrement(ref this.unfinishedTasks);
+                    this.logger.LogTrace("Accepting task aborted or failed, there are {0} unfinished tasks now.", taskCount);
 
-            TaskCompletionSource<bool> completion = client.ProcessingCompletion;
-            client.Dispose();
-            completion.SetResult(true);
-
+                    break;
+                }
+            }
+            
             this.logger.LogTrace("(-)");
         }
 
@@ -436,6 +436,16 @@ namespace Stratis.Bitcoin.P2P.Peer
                 client.Dispose();
                 completion.Task.Wait();
             }
+            catch (Exception e)
+            {
+                this.logger.LogTrace("Exception occurred: {0}", e.ToString());
+            }
+
+            this.tcpListener?.Stop();
+
+            this.logger.LogTrace("Waiting for {0} unfinished tasks to complete.", this.unfinishedTasks);
+            while (this.unfinishedTasks > 0)
+                Thread.Sleep(100);
 
             this.logger.LogTrace("(-)");
         }
