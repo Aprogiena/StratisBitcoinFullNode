@@ -77,16 +77,6 @@ namespace Stratis.Bitcoin.Utilities
         }
 
         /// <summary>
-        /// Add a new item to the queue and signal to the consumer task.
-        /// </summary>
-        /// <param name="item">Item to be added to the queue.</param>
-        public void Enqueue(T item)
-        {
-            this.items.Enqueue(item);
-            this.enqueuedSignal.Set();
-        }
-
-        /// <summary>
         /// Consumer of the newly added items to the queue that waits for the signal 
         /// and then executes the user-defined callback.
         /// </summary>
@@ -124,6 +114,16 @@ namespace Stratis.Bitcoin.Utilities
                     break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Add a new item to the queue and signal to the consumer task.
+        /// </summary>
+        /// <param name="item">Item to be added to the queue.</param>
+        public void Enqueue(T item)
+        {
+            this.items.Enqueue(item);
+            this.enqueuedSignal.Set();
         }
 
         /// <summary>
