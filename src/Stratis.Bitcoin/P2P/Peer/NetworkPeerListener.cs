@@ -59,7 +59,7 @@ namespace Stratis.Bitcoin.P2P.Peer
             IncomingMessage message = this.queue.Dequeue();
 
             if (this.queue.Count == 0)
-                this.signal.Set();
+                this.signal.Reset();
 
             return message;
         }
@@ -130,10 +130,10 @@ namespace Stratis.Bitcoin.P2P.Peer
         {
             UnprocessedMessageQueue messageQueue;
             
-            if (!this.unprocessedMessages.TryGetValue(payloadType.GetType(), out messageQueue))
+            if (!this.unprocessedMessages.TryGetValue(payloadType, out messageQueue))
             {
                 messageQueue = new UnprocessedMessageQueue();
-                this.unprocessedMessages.Add(payloadType.GetType(), messageQueue);
+                this.unprocessedMessages.Add(payloadType, messageQueue);
             }
 
             return messageQueue;
@@ -199,6 +199,10 @@ namespace Stratis.Bitcoin.P2P.Peer
             {
                 IncomingMessage message = await this.ReceiveMessageAsync<TPayload>(cancellationToken).ConfigureAwait(false);
                 result = (TPayload)message.Message.Payload;
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
             finally
             {
