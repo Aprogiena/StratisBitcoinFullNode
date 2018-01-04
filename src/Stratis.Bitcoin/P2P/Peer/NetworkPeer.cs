@@ -696,7 +696,7 @@ namespace Stratis.Bitcoin.P2P.Peer
         /// <param name="cancellationToken">Cancellation that allows aborting the operation at any stage.</param>
         public async Task VersionHandshakeAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            await this.VersionHandshakeAsync(null, cancellationToken);
+            await this.VersionHandshakeAsync(null, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
