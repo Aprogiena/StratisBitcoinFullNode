@@ -126,11 +126,7 @@ namespace Stratis.Bitcoin.P2P.Peer
             this.writeLock = new AsyncLock();
 
             this.CancellationSource = new CancellationTokenSource();
-
-            // When the cancellation source is cancelled, the registered callback is executed within 
-            // the context of the thread that invoked the cancellation. However, we want Shutdown method 
-            // to be called in separation of that to have cleaner shutdown sequence.
-            this.cancelRegistration = this.CancellationSource.Token.Register(() => Task.Run(() => this.Shutdown()));
+            this.cancelRegistration = this.CancellationSource.Token.Register(this.Shutdown);
 
             this.MessageProducer = new MessageProducer<IncomingMessage>();
             this.messageListener = new CallbackMessageListener<IncomingMessage>(processMessageAsync);
@@ -202,7 +198,12 @@ namespace Stratis.Bitcoin.P2P.Peer
                         this.setPeerStateOnShutdown = NetworkPeerState.Failed;
                 }
 
-                this.CancellationSource.Cancel();
+                // When the cancellation source is cancelled, the tasks waiting for it and the registered callback are executed within 
+                // the context of the thread that invoked the cancellation. However, we need Shutdown method and the task cancellation
+                // exception handlers to be called in separation of that to have cleaner shutdown sequence.
+                // CancelAfter will make sure the cancellation occurs in separated context and the thread executing this code 
+                // will continue safely.
+                this.CancellationSource.CancelAfter(0);
             }
 
             this.logger.LogTrace("(-)");
@@ -239,7 +240,7 @@ namespace Stratis.Bitcoin.P2P.Peer
 
             this.Disconnect();
 
-            if (this.peer.State != NetworkPeerState.Failed)
+            if ((this.peer.State != NetworkPeerState.Failed) && (this.peer.State != this.setPeerStateOnShutdown))
                 this.peer.State = this.setPeerStateOnShutdown;
 
             foreach (INetworkPeerBehavior behavior in this.peer.Behaviors)
@@ -386,7 +387,8 @@ namespace Stratis.Bitcoin.P2P.Peer
                         this.setPeerStateOnShutdown = NetworkPeerState.Failed;
                 }
 
-                this.CancellationSource.Cancel();
+                // See comment in ReceiveMessagesAsync about why we use CancelAfter here.
+                this.CancellationSource.CancelAfter(0);
             }
             finally
             {
