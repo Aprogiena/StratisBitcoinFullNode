@@ -405,7 +405,13 @@ namespace Stratis.Bitcoin.P2P.Peer
                         this.setPeerStateOnShutdown = NetworkPeerState.Failed;
                 }
 
-                this.CancellationSource.Cancel();
+                this.logger.LogDebug("XXX calling cancel");
+                if (!this.CancellationSource.IsCancellationRequested)
+                {
+                    this.CancellationSource.Cancel();
+                    this.logger.LogDebug("XXX cancel called, still inside try");
+                }
+                else this.logger.LogDebug("XXX cancel NOT called");
             }
             finally
             {
@@ -624,8 +630,13 @@ namespace Stratis.Bitcoin.P2P.Peer
                 this.disposed = true;
             }
 
-            Task.Run(() => this.Shutdown());
-            this.CancellationSource.Cancel();
+            this.logger.LogDebug("XXX calling cancel");
+            if (!this.CancellationSource.IsCancellationRequested)
+            {
+                this.CancellationSource.Cancel();
+                this.logger.LogDebug("XXX cancel called, still inside try");
+            }
+            else this.logger.LogDebug("XXX cancel NOT called");
 
             this.receiveMessageTask?.Wait();
             this.ShutdownComplete.Task.Wait();
