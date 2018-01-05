@@ -208,10 +208,6 @@ namespace Stratis.Bitcoin.P2P.Peer
                 IncomingMessage message = await this.ReceiveMessageAsync<TPayload>(cancellationToken).ConfigureAwait(false);
                 result = (TPayload)message.Message.Payload;
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
             finally
             {
                 cancellationSource?.Dispose();
