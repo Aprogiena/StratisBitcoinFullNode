@@ -607,7 +607,8 @@ namespace Stratis.Bitcoin.P2P.Peer
                 this.disposed = true;
             }
 
-            this.CancellationSource.Cancel();
+            // See comment in ReceiveMessagesAsync about why we use CancelAfter here.
+            this.CancellationSource.CancelAfter(0);
 
             this.receiveMessageTask?.Wait();
             this.ShutdownComplete.Task.Wait();
