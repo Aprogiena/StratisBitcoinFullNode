@@ -98,7 +98,11 @@ namespace Stratis.Bitcoin.P2P.Peer
         public NetworkPeerListener(NetworkPeer peer)
         {
             this.lockObject = new object();
-            this.unprocessedMessages = new Dictionary<Type, UnprocessedMessageQueue>();
+            this.unprocessedMessages = new Dictionary<Type, UnprocessedMessageQueue>
+            {
+                // Every incoming message is of base type Payload, so we can initialize it now.
+                { typeof(Payload), new UnprocessedMessageQueue() }
+            };
 
             this.peer = peer;
             this.subscription = peer.MessageProducer.AddMessageListener(this);
@@ -116,6 +120,10 @@ namespace Stratis.Bitcoin.P2P.Peer
             {
                 UnprocessedMessageQueue messageQueue = this.GetPayloadQueueLocked(payloadType);
                 messageQueue.Enqueue(message);
+                
+                // Every message is also enqueued in Payload queue.
+                if (payloadType != typeof(Payload))
+                    this.unprocessedMessages[typeof(Payload)].Enqueue(message);
             }
         }
 
