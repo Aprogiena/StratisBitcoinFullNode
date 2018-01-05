@@ -130,12 +130,12 @@ namespace Stratis.Bitcoin.P2P.Peer
             // When the cancellation source is cancelled, the registered callback is executed within 
             // the context of the thread that invoked the cancellation. However, we want Shutdown method 
             // to be called in separation of that to have cleaner shutdown sequence.
-            /*this.cancelRegistration = this.CancellationSource.Token.Register(() =>
+            this.cancelRegistration = this.CancellationSource.Token.Register(() =>
             {
                 this.logger.LogDebug("XXX cancellation registration start");
                 Task.Run(() => this.Shutdown());
                 this.logger.LogDebug("XXX cancellation registration finished");
-            });*/
+            });
 
             this.MessageProducer = new MessageProducer<IncomingMessage>();
             this.messageListener = new CallbackMessageListener<IncomingMessage>(processMessageAsync);
@@ -207,11 +207,15 @@ namespace Stratis.Bitcoin.P2P.Peer
                         this.setPeerStateOnShutdown = NetworkPeerState.Failed;
                 }
 
-                this.logger.LogDebug("XXX calling cancel");
                 try
                 {
-                    Task.Run(() => this.Shutdown());
-                    this.CancellationSource.Cancel();
+                    this.logger.LogDebug("XXX calling cancel");
+                    if (!this.CancellationSource.IsCancellationRequested)
+                    {
+                        this.CancellationSource.Cancel();
+                        this.logger.LogDebug("XXX cancel called, still inside try");
+                    }
+                    else this.logger.LogDebug("XXX cancel NOT called");
                 }
                 catch (Exception e)
                 {
@@ -243,20 +247,13 @@ namespace Stratis.Bitcoin.P2P.Peer
         /// is called when all behaviors are detached.
         /// </para>
         /// </remarks>
-        public bool shutdownCalled = false;
         private void Shutdown()
         {
             this.logger.LogTrace("()");
 
             lock (this.shutdownLock)
             {
-                if (shutdownCalled)
-                {
-                    this.logger.LogTrace("(-)[already XXX ]");
-                    return;
-                }
                 this.shutdownInProgress = true;
-                this.shutdownCalled = true;
             }
 
             this.Disconnect();
@@ -408,7 +405,6 @@ namespace Stratis.Bitcoin.P2P.Peer
                         this.setPeerStateOnShutdown = NetworkPeerState.Failed;
                 }
 
-                Task.Run(() => this.Shutdown());
                 this.CancellationSource.Cancel();
             }
             finally
