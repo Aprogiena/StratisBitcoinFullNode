@@ -169,7 +169,7 @@ namespace Stratis.Bitcoin.P2P.Peer
                         {
                             // Record the error.
                             error = e;
-                            return null;
+                            return null;                            
                         }
                     }).ConfigureAwait(false);
 
@@ -180,7 +180,7 @@ namespace Stratis.Bitcoin.P2P.Peer
                     this.logger.LogTrace("Connection accepted from client '{0}'.", tcpClient.Client.RemoteEndPoint);
 
                     NetworkPeer networkPeer = this.networkPeerFactory.CreateNetworkPeer(this.Network, tcpClient, this.CreateNetworkPeerConnectionParameters());
-
+                    
                     this.ConnectedNetworkPeers.Add(networkPeer);
                     networkPeer.StateChanged += this.Peer_StateChanged;
 
@@ -195,7 +195,7 @@ namespace Stratis.Bitcoin.P2P.Peer
             {
                 this.logger.LogDebug("Exception occurred: {0}", e.ToString());
             }
-
+            
             this.logger.LogTrace("(-)");
         }
 

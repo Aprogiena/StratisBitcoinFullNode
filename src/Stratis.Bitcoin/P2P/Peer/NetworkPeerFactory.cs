@@ -83,7 +83,7 @@ namespace Stratis.Bitcoin.P2P.Peer
     {
         /// <summary>Factory for creating loggers.</summary>
         private readonly ILoggerFactory loggerFactory;
-
+        
         /// <summary>Instance logger.</summary>
         private readonly ILogger logger;
 
