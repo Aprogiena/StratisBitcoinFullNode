@@ -1,0 +1,4 @@
+What is the TXID of the largest (in terms of its size in bytes) TX on Stratis testnet?
+
+Is it bdc206c4ef88ebe64b68c25fab307c55b3c0cc0725120d2a8356d73cce7f19af? No, it is not.
+

@@ -1,0 +1,10 @@
+To get the next word, exploit CVE-2012-2459 against a block number 333445 on the Stratis test net. 
+Once you create such a block, connect to a special node that is running on IP address 52.233.33.138
+and present that block using Block2 payload to the node after a normal handshake. 
+
+Block2 payload is exactly the same as Block payload, except for its network command, which is "block2".
+
+If the solution is correct, the special node replies with Phrase payload (network command "phrasere"), which contains:
+
+– instructions message (150 bytes long byte array that encodes next instructions as a string with 0 bytes padding at the end)
+                                                                                                         

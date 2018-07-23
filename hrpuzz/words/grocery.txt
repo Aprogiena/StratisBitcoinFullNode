@@ -1,0 +1,69 @@
+For the next word, you will again need to work with Stratis full node. This time, however, you need to implement a new feature.
+More specifically, you need to implement understanding of new payloads to your node. 
+
+Let's call these payloads FaucetRequest, FaucetChallenge, FaucetSolution, FaucetReward.
+
+Your node needs to connect to a special node on testnet that listens on this IP address: 52.233.33.138.
+After a standard handshake, your node can send FaucetRequest payload (network command "faucetreq"), which contains:
+
+– your Stratis testnet address (40 bytes long byte array that encodes the address as an ASCII string with 0 bytes padding at the end)
+
+
+The special node replies with FaucetChallenge (network command "faucetchal"), which contains:
+
+– SHA256 hash (32 bytes long byte array)
+– challenge data (28 bytes long byte array)
+
+
+To which your node is supposed to reply with FaucetSolution (network command "faucetsol") payload, which contains:
+
+– challenge data (28 bytes long byte array, byte copy from FaucetChallenge)
+– nonce (4 bytes long byte array) such that SHA256 (challenge data + nonce) = hash from FaucetChallenge, where + operator is concatenation of byte arrays
+
+The nonce can be interpreted as 32-bit unsigned integer written in network byte order. As such it is guaranteed that the value stored in the integer is lower than 0x01000000.
+   
+
+If the solution is correct, the special node replies with FaucetReward (network command "faucetrew"), which contains:
+
+– the next word (8 bytes long byte array that encodes the word as a string with 0 bytes padding at the end)
+
+Moreover, the special node will send you some coins to the address you specified in FaucetRequest.
+
+If at any point, you violate the protocol, your node may be disconnected.
+
+
+Example of the protocol:
+
+1) After a handshake, your node sends FaucetRequest:
+
+54 46 45 37 52 32 46 53 41 67 41 65 4A 78 74 31
+66 67 57 32 59 56 43 68 39 5A 63 34 34 38 66 33
+6D 73 00 00 00 00 00 00
+
+which would represent testnet address TFE7R2FSAgAeJxt1fgW2YVCh9Zc448f3ms.
+
+
+2) The special node replies with the following FaucetChallenge:
+
+25 71 9b 0b e9 d9 96 36 05 0b 2e f9 25 eb de 54
+f7 2b 9d 3d 83 ce 2d de fb 28 f0 69 27 4d 33 9e 
+12 34 56 78 90 AB CD EF 11 22 33 44 55 66 77 88
+99 00 AA BB CC DD EE FF 11 12 22 33 
+
+The first 32 bytes would represent the hash 25719b0be9d99636050b2ef925ebde54f72b9d3d83ce2ddefb28f069274d339e
+and the remaining 28 bytes would represent the challenge data. 
+
+
+3) Then your node is expected to send the following FauceSolution back:
+
+12 34 56 78 90 AB CD EF 11 22 33 44 55 66 77 88
+99 00 AA BB CC DD EE FF 11 12 22 33 00 00 FA DE
+
+where the nonce would be 0x0000FADE.
+
+
+4) If the solution is correct, the special node replies with FaucetReward:
+
+6C 61 6C 61 6C 61 00 00
+
+which would represent the the next word is "lalala".

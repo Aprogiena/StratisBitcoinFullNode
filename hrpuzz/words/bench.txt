@@ -1,0 +1,2 @@
+Congratulations! Now you can restore the wallet (you can use Swagger on the C# full node!), the password is value in satoshis (or stratoshis?) 
+you received from the faucet puzzle (1.23 STATS would translate to password "123000000"), account is "account 0".

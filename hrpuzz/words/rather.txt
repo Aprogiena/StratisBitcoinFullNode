@@ -1,0 +1,8 @@
+Once again you will need to work with the full node code from this GitHub repository branch:
+
+https://github.com/Aprogiena/StratisBitcoinFullNode/tree/experiment/hrpuzz
+
+A secret faction of Stratis forked away from Stratis test net. Only one node is known to be operating on this secret network. 
+It operates on 52.178.220.228:35353. Your task is to infiltrate their network and sync with their chain. 
+
+

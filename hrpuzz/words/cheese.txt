@@ -1,0 +1,85 @@
+In order to produce new block on Stratis network, a miner has to be online with running node and have its wallet open. 
+This is necessary because at each time slot, the miner is supposed to check whether any of its UTXOs is eligible to 
+be used as so-called coinstake kernel input and if so, it needs to use the private key associated with this UTXO 
+in order to produce the coinstake transaction.
+
+A coinstake transaction in Stratis protocol is a special transaction that is at the second position in each block. 
+The UTXO that is spent in this transaction in its first input (called kernel) has to meet some special properties 
+in order to be allowed to be used as the kernel. 
+
+The chance of a UTXO to be eligible for producing a coinstake transaction grows linearly with the number of coins 
+that this UTXO presents.
+
+This implies that the biggest miners on the network are required to keep the coins in an open hot wallet. This is 
+dangerous in case the machine where the hot wallet runs is compromised.
+
+We propose cold staking, which is mechanism that eliminates the need to keep the coins in the hot wallet. With cold 
+staking implemented, the miner still needs to be online with running the node and open hot wallet, but the coins that 
+are used for staking, can be safely stored in a cold storage. Therefore the open hot wallet does not need to hold any 
+significant amount of coins, or it can even be empty.
+
+To implement cold staking, we use a soft fork to redefine OP_NOP10 instruction, newly renamed to 
+OP_CHECKCOLDSTAKEVERIFY. The new behaviour of this opcode is as follows:
+
+ * Check if the transaction spending an output, which contains this instruction, is a coinstake transaction. 
+   If it is not, the script fails.
+
+ * Check that ScriptPubKeys of all inputs of this transaction are the same. If they are not, the script fails.
+
+ * Check that ScriptPubKeys of all outputs of this transaction, except for the marker output (a special first output 
+   of each coinstake transaction) and the pubkey output (an optional special second output that contains public key 
+   in coinstake transaction), are the same as ScriptPubKeys of the inputs. If they are not, the script fails.
+
+ * Check that the sum of values of all inputs is smaller or equal to the sum of values of all outputs. If this does 
+   not hold, the script fails.
+
+ * If the above-mentioned checks pass, the instruction does nothing.
+
+
+Using this new opcode, we can now construct a coinstake transaction output in a way that there are two keys that can 
+be used to spend the output. 
+
+The first key is the key from the hot wallet. We want this key to be usable only for creating another coinstake 
+transaction that preserves this limitation to the newly created output.
+
+The second key is the key from the cold storage. We want this key to be able to spend the output arbitrarily.
+
+
+Your task in this puzzle is to create a ScriptPubKey of an output of such a cold staking coinstake transaction that 
+utilizes the new opcode. The ScriptSig to spend that output for another cold staking transaction using a hot wallet 
+key is:
+
+<sig> <hotPubKey> 1
+
+
+The ScriptSig to spend that output arbitrarily using a cold storage key is:
+
+<sig> <coldPubKey> 0
+
+
+Write your ScriptPubKey on a single line with opcodes written with capital letters and instead of hot wallet public 
+key hash use <hotPubKeyHash> and instead of cold storage public key hash use <coldPubKeyHash>. Use a single space 
+as the separator. There is no new line character or separator at the end. Use the P2PKH template as an inspiration.
+Note that there are many ways on how to write the script, so let's agree on using OP_CHECKCOLDSTAKEVERIFY just 
+before OP_CHECKSIG. We are not looking for the shortest possible version of how to write the output to the chain, 
+which is prevented by the agreed specific position of OP_CHECKCOLDSTAKEVERIFY, but we make that condition in order 
+to eliminate many ways of writing the solution. Even with the condition, there are many ways left, but few make 
+good sense.
+
+For example, if you were about to construct P2PKH ScriptPubKey for the hot wallet key, you would write:
+
+OP_DUP OP_HASH160 <hotPubKeyHash> OP_EQUALVERIFY OP_CHECKSIG
+
+And then you would calculate its SHA256 hash, which is 
+
+a58b0f14654292b0d0ce2b9958fa6243330acfd083b95fcf985343bf2f21c17f
+
+
+
+Once you are done, calculate SHA256 hash of your cold staking coinstake output ScriptPubKey. Then XOR the hash with 
+
+32c1e59540ea97bbd8d3d41df83946868ddd8656e0942b3d0df65499609c00e2
+
+to reveal the next word.
+
+

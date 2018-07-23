@@ -1,0 +1,7 @@
+To find the next word, you need to download Stratis full node code 
+from this GitHub repository branch: https://github.com/Aprogiena/StratisBitcoinFullNode/tree/experiment/hrpuzz
+
+Then you need to build the solution and set up trace logs for "Stratis.Bitcoin.Features.Consensus.*". 
+Then run the node on Stratis testnet and inspect the corresponding log file once the node is fully synced with the network.
+
+Hint: Read https://github.com/stratisproject/StratisBitcoinFullNode/blob/master/Documentation/using-logging.md on how to enable trace level logging.

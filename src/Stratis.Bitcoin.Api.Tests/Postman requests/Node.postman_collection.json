@@ -1,0 +1,36 @@
+{
+	"info": {
+		"name": "Node",
+		"_postman_id": "c3852998-54dd-4c7c-2831-61a8336b2f1f",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Shutdown node",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:37220/api/node/shutdown",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "37220",
+					"path": [
+						"api",
+						"node",
+						"shutdown"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

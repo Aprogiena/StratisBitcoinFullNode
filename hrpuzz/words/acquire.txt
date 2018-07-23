@@ -1,0 +1,11 @@
+We are still working with the Stratis full node code here (from GitHub repository branch 
+https://github.com/Aprogiena/StratisBitcoinFullNode/tree/experiment/hrpuzz). 
+The project contains many tests. One of the tests inside Stratis.Bitcoin.Features.MemoryPool.Tests 
+project fails. Can you help us fixing it?
+
+Once you fix the test properly, you can calculate an ID of the transaction that this test creates. 
+Take the ID and XOR it with
+
+8c1b2533f9126c6e97416733a5b81d2e3875ab5776d44f8cf91d830f4b541ef7
+
+to reveal the next word.

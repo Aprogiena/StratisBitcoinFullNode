@@ -1,0 +1,16 @@
+Next one is easy. Just generate a private key and public key pair, such that the mainnet Stratis 
+address representing the public key starts with "STRAT" (case-sensitive).
+
+Then connect to a special node on testnet that listens on this IP address: 52.233.33.138 and after 
+a standard handshake send it VanityRequest payload and receive VanityResponse payload.
+
+VanityRequest (network command "vanityreq") is defined as:
+
+– compressed public key P, which address on Stratis mainnet starts with "STRAT" (33 bytes long byte array)
+- length L of signature (1 byte)
+- signature of SHA256d(P) created with the corresponding private key (L bytes long byte array)
+
+If the solution is correct, the special node replies with VanityResponse (network command "vanityres"), which contains:
+
+– the next word (8 bytes long byte array that encodes the word as a string with 0 bytes padding at the end)
+
