@@ -35,3 +35,19 @@ on this page as soon as possible.
 Shortly after all prizes are claimed (the money and the 2 job offers), we will publish solutions to all puzzles on this page 
 to prove it was genuine. If the prize money is not claimed within 6 months, we will also publish the solutions to the puzzles 
 to prove it was genuine, but we will keep the money.
+
+
+##### Errata
+
+Thanks to @lotek#3192 for reporting the bug in largest transaction puzzle.
+The first line of the puzzle was 
+
+```
+What is the TXID of the largest (in terms of its size in bytes) TX on Stratis testnet?
+```
+
+and has been changed to 
+
+```
+What is the TXID of the largest (in terms of its size in bytes) TX on Stratis testnet before block 400000?
+```
