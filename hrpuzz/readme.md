@@ -51,3 +51,7 @@ and has been changed to
 ```
 What is the TXID of the largest (in terms of its size in bytes) TX on Stratis testnet before block 400000?
 ```
+
+##### Solution
+
+Solution has been published on 15th October in [Khil0ne's article on Medium](https://medium.com/@khilonecrypto/stratis-puzzle-solutions-e6b990a955e).
